@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="img/flowers.png" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,600&family=Great+Vibes&display=swap" rel="stylesheet" />
+    <title>Un video para ti</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --night: #150d12;
+        --rose: #f7d6d0;
+        --gold: #f4d068;
+        --text: #fceade;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        align-items: center;
+        background: radial-gradient(circle at center, #2d0c22 0%, #0b0610 72%);
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+        font-family: "Cormorant Garamond", serif;
+        justify-content: center;
+        margin: 0;
+        min-height: 100vh;
+        overflow-x: hidden;
+        padding: 24px;
+        text-align: center;
+      }
+
+      #fireworks-canvas {
+        height: 100vh;
+        inset: 0;
+        pointer-events: none;
+        position: fixed;
+        width: 100vw;
+        z-index: 0;
+      }
+
+      main {
+        max-width: 820px;
+        position: relative;
+        z-index: 1;
+        width: 100%;
+      }
+
+      h1 {
+        color: var(--gold);
+        font-family: "Great Vibes", cursive;
+        font-size: clamp(3rem, 10vw, 5.5rem);
+        font-weight: 400;
+        margin: 0 0 8px;
+      }
+
+      .message {
+        font-size: clamp(1.25rem, 3vw, 1.65rem);
+        line-height: 1.45;
+        margin: 0 auto 24px;
+        max-width: 650px;
+      }
+
+      video {
+        background: #080508;
+        border: 1px solid rgba(244, 208, 104, 0.55);
+        border-radius: 12px;
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+        display: block;
+        margin: 0 auto 24px;
+        max-height: 65vh;
+        max-width: 100%;
+        width: 760px;
+      }
+
+      #video-error {
+        color: #ffb7a8;
+        display: none;
+        font-size: 1.1rem;
+        margin: -8px auto 22px;
+      }
+
+      a {
+        color: var(--rose);
+        font-size: 1.1rem;
+        text-decoration: none;
+      }
+
+      a:hover,
+      a:focus-visible {
+        color: #fff;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="fireworks-canvas" aria-hidden="true"></canvas>
+
+    <main>
+      <h1>Para mi mujer mas especial</h1>
+      <p class="message">
+        Pamela Abigail Salazar Flores yo Kevin Andres Ñacato Pachacama TE AMO con todo mi corazon y quiero que sepas que eres la mujer de mi vida. 
+        Y quiero que sepas que No quiero recuperarte solo para volver a ser lo mismo de antes. 
+        quiero que si algun dia decides volver a mis brazos y caminar junto a mi, sea po que viste en mi un hombre que aprendió
+        del daño que algun dia te causo. Me arrepiento desde el fondo de mi alma por haberte quitado la tranquilidad y ese brillo tan lindo de tus ojos que
+        me miraban con tanto amor. Entiendo que el amor no solo se demuestra con palabras, sino con hechos y como hacemos sentir a esa persona tan especial.
+        Sin presion alguna, esperaré tu respuesta. 
+        -
+
+      </p>
+
+      <video id="memory-video" controls preload="metadata" playsinline>
+        <source src="video/video.mp4" type="video/mp4" />
+        <track kind="subtitles" src="subtitulos.vtt" srclang="es" label="Español" default />
+        Tu navegador no puede reproducir este video.
+      </video>
+      <p id="video-error">Agrega tu archivo <strong>video/video.mp4</strong> para verlo aquí.</p>
+
+      <p class="final-message">
+        Quiero pasar contigo estas navidades y todas las que vengan y para ello
+        también conquistaré a tu Mami.<br />
+        TE AMO MUCHISIMO PAMELA ABIGAIL SALAZAR FLORES<br />
+        (pdt: ningún niño fue obligado)
+      </p>
+
+      <a href="flower.html">← Volver a las flores</a>
+    </main>
+
+    <script>
+      const memoryVideo = document.getElementById("memory-video");
+      const videoError = document.getElementById("video-error");
+
+      memoryVideo.addEventListener("error", function () {
+        videoError.style.display = "block";
+      });
+
+      const canvas = document.getElementById("fireworks-canvas");
+      const context = canvas.getContext("2d");
+      const palette = ["#ff77a9", "#ffb6c1", "#ffd1dc", "#ffffff"];
+      let width = 0;
+      let height = 0;
+      let particles = [];
+      let fireworks = [];
+      let timer = 0;
+
+      function resizeCanvas() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }
+
+      function explode(x, y) {
+        for (let i = 0; i < 90; i += 1) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 4 + 1;
+          particles.push({
+            x,
+            y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            alpha: 1,
+            color: palette[Math.floor(Math.random() * palette.length)]
+          });
+        }
+      }
+
+      function launch() {
+        fireworks.push({
+          x: Math.random() * width,
+          y: height,
+          targetX: Math.random() * width * 0.6 + width * 0.2,
+          targetY: Math.random() * height * 0.35 + height * 0.15
+        });
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        context.fillStyle = "rgba(11, 6, 16, 0.2)";
+        context.fillRect(0, 0, width, height);
+
+        for (let i = fireworks.length - 1; i >= 0; i -= 1) {
+          const firework = fireworks[i];
+          const dx = firework.targetX - firework.x;
+          const dy = firework.targetY - firework.y;
+          const distance = Math.hypot(dx, dy);
+          if (distance < 6) {
+            fireworks.splice(i, 1);
+            explode(firework.targetX, firework.targetY);
+            continue;
+          }
+          firework.x += (dx / distance) * 5;
+          firework.y += (dy / distance) * 5;
+          context.fillStyle = palette[0];
+          context.fillRect(firework.x, firework.y, 2, 8);
+        }
+
+        for (let i = particles.length - 1; i >= 0; i -= 1) {
+          const particle = particles[i];
+          particle.vx *= 0.95;
+          particle.vy = particle.vy * 0.95 + 0.04;
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+          particle.alpha -= 0.012;
+          context.globalAlpha = Math.max(0, particle.alpha);
+          context.fillStyle = particle.color;
+          context.beginPath();
+          context.arc(particle.x, particle.y, 1.5, 0, Math.PI * 2);
+          context.fill();
+          if (particle.alpha <= 0) particles.splice(i, 1);
+        }
+        context.globalAlpha = 1;
+
+        timer += 1;
+        if (timer > 110) {
+          launch();
+          timer = 0;
+        }
+      }
+
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+      animate();
+    </script>
+  </body>
+</html>

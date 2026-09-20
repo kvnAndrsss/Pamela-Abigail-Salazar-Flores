@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="img/flowers.png" type="image/x-icon" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,600&family=Great+Vibes&display=swap" rel="stylesheet" />
+    <title>Nota de voz para ti</title>
+    <style>
+      :root {
+  --night: #0b0610;
+  --rose: #fce7f3;
+  --gold: #e0a96d;
+        --pink: #d4837c;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+  align-items: center;
+  background: radial-gradient(circle at center, #2d0c22 0%, var(--night) 72%);
+  color: var(--rose);
+  display: flex;
+  flex-direction: column;
+  font-family: "Cormorant Garamond", serif;
+  justify-content: space-between;
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding: 0 24px;
+  text-align: center;
+  }
+
+  #fireworks-canvas {
+  height: 100vh;
+  inset: 0;
+  pointer-events: none;
+  position: fixed;
+  width: 100vw;
+  z-index: 0;
+  }
+
+  header,
+      main,
+      footer {
+        position: relative;
+        z-index: 1;
+      }
+
+      header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  max-width: 1040px;
+  opacity: 0.82;
+  padding: 24px 0;
+        width: 100%;
+      }
+
+      .eyebrow,
+      footer {
+        color: #f9a8d4;
+        font-size: 0.75rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+      .spark {
+        align-items: center;
+        border: 1px solid rgba(244, 168, 208, 0.35);
+  border-radius: 50%;
+  display: flex;
+  height: 34px;
+        justify-content: center;
+        width: 34px;
+      }
+      main {
+        margin: auto;
+        max-width: 700px;
+        padding: 48px 0;
+        width: 100%;
+      }
+      .content {
+        padding: clamp(24px, 6vw, 52px) 0;
+      }
+      .badge {
+        color: #f9a8d4;
+        display: inline-block;
+  font-size: 1.25rem;
+  font-style: italic;
+  letter-spacing: 0.08em;
+        margin-bottom: 16px;
+      }
+
+      h1 {
+  background: linear-gradient(90deg, #fecdd3, #fdf2f8, #fde68a);
+  background-clip: text;
+  color: transparent;
+  font-family: "Great Vibes", cursive;
+  font-size: clamp(3.6rem, 10vw, 6.5rem);
+  font-weight: 400;
+        line-height: 1.15;
+        margin: 0 0 24px;
+      }
+      .intro {
+        color: rgba(251, 207, 232, 0.82);
+        font-size: clamp(1.35rem, 2.5vw, 1.7rem);
+  font-style: italic;
+  line-height: 1.5;
+  margin: 0 auto 30px;
+        max-width: 560px;
+      }
+
+      audio {
+  accent-color: var(--pink);
+  display: block;
+  margin: 0 auto 30px;
+        max-width: 100%;
+        width: 440px;
+      }
+      #audio-error {
+        color: #ffb7a8;
+        display: none;
+        font-size: 1.2rem;
+        margin: -10px auto 24px;
+      }
+      .back-link {
+        border: 1px solid rgba(249, 168, 212, 0.3);
+        border-radius: 999px;
+  color: #fbcfe8;
+  display: inline-block;
+  font-size: 1.15rem;
+  padding: 11px 20px;
+  text-decoration: none;
+  transition: background 180ms ease, color 180ms ease;
+  }
+
+  .back-link:hover,
+      .back-link:focus-visible {
+        background: #fbcfe8;
+        color: #2d0c22;
+        outline: none;
+      }
+
+      footer {
+        opacity: 0.5;
+        padding: 24px 0;
+      }
+    </style>
+  </head>
+  <body>
+  <canvas id="fireworks-canvas" aria-hidden="true"></canvas>
+
+
+    <main>
+      <section class="content" aria-labelledby="page-title">
+     
+  <h1 id="page-title">Una nota de voz para ti</h1>
+  <p class="intro">Eschucha mis palabras cada una sale de mi corazón, perdon por la voz </p>
+  <audio id="voice-audio" controls preload="metadata">
+          <source src="sound/voz.mp3" type="audio/mpeg" />
+          Tu navegador no puede reproducir este audio.
+        </audio>
+        <p id="audio-error">Aún falta agregar el archivo <strong>sound/voz.mp3</strong>.</p>
+        <a class="back-link" href="flower.html">Volver a las flores</a>
+      </section>
+  </main>
+
+  <script>
+  const audio = document.getElementById("voice-audio");
+  const audioError = document.getElementById("audio-error");
+  const canvas = document.getElementById("fireworks-canvas");
+  const context = canvas.getContext("2d");
+  const palette = ["#ff77a9", "#ffb6c1", "#ffd1dc", "#ffffff"];
+  let width = 0;
+  let height = 0;
+  let particles = [];
+  let fireworks = [];
+  let timer = 0;
+
+  audio.addEventListener("error", function () {
+        audioError.style.display = "block";
+      });
+
+      function resizeCanvas() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }
+      function explode(x, y) {
+        for (let i = 0; i < 100; i += 1) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 4 + 1;
+          particles.push({
+            x,
+            y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            alpha: 1,
+            color: palette[Math.floor(Math.random() * palette.length)]
+          });
+        }
+      }
+
+      function launch() {
+        fireworks.push({
+          x: Math.random() * width,
+          y: height,
+          targetX: Math.random() * width * 0.6 + width * 0.2,
+          targetY: Math.random() * height * 0.35 + height * 0.15
+        });
+  }
+
+  function animate() {
+  requestAnimationFrame(animate);
+  context.fillStyle = "rgba(11, 6, 16, 0.2)";
+  context.fillRect(0, 0, width, height);
+
+        for (let i = fireworks.length - 1; i >= 0; i -= 1) {
+          const firework = fireworks[i];
+          const dx = firework.targetX - firework.x;
+          const dy = firework.targetY - firework.y;
+          const distance = Math.hypot(dx, dy);
+          if (distance < 6) {
+            fireworks.splice(i, 1);
+            explode(firework.targetX, firework.targetY);
+            continue;
+          }
+          firework.x += (dx / distance) * 5;
+          firework.y += (dy / distance) * 5;
+          context.fillStyle = palette[0];
+          context.fillRect(firework.x, firework.y, 2, 8);
+        }
+
+        for (let i = particles.length - 1; i >= 0; i -= 1) {
+          const particle = particles[i];
+          particle.vx *= 0.95;
+          particle.vy = particle.vy * 0.95 + 0.04;
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+          particle.alpha -= 0.012;
+          context.globalAlpha = Math.max(0, particle.alpha);
+          context.fillStyle = particle.color;
+          context.beginPath();
+          context.arc(particle.x, particle.y, 1.5, 0, Math.PI * 2);
+          context.fill();
+          if (particle.alpha <= 0) particles.splice(i, 1);
+          }
+          context.globalAlpha = 1;
+
+          timer += 1;
+        if (timer > 110) {
+          launch();
+          timer = 0;
+        }
+      }
+
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+      animate();
+    </script>
+  </body>
+</html>
