@@ -14,23 +14,43 @@
     <style>
       .footer-message {
         position: fixed;
-        bottom: 105px;
+        bottom: 120px;
         left: 50%;
-        z-index: 20;
-        width: min(88vw, 360px);
+        z-index: 1100;
+        width: min(94vw, 620px);
         transform: translateX(-50%);
         color: #fff8e7;
         font-family: "Cormorant Garamond", serif;
-        font-size: 0.95rem;
-        line-height: 1.15;
+        font-size: 0.9rem;
+        line-height: 1.4;
         text-align: center;
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
       }
 
       @media only screen and (max-width: 390px) {
         .footer-message {
-          bottom: 178px;
-          font-size: 0.85rem;
+          bottom: 125px;
+          font-size: 0.82rem;
+        }
+      }
+
+      .mensaje-romantico {
+        left: 50%;
+        max-width: 1000px !important;
+        transform: translateX(-50%);
+        width: min(96vw, 1000px) !important;
+        letter-spacing: normal !important;
+      }
+
+      .dedicatoria-poetica {
+        font-size: clamp(1.25rem, 2.4vw, 1.7rem) !important;
+        line-height: 1.9 !important;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .mensaje-romantico {
+          left: 50%;
+          width: calc(100% - 20px) !important;
         }
       }
     </style>
@@ -56,9 +76,8 @@
           se reconocen no se sueltan,<br>
           ni con el silencio, <br>
           ni con la distancia, <br>
-          ni con las vueltas de la vida".<br>
-          <br>
-                                 - Mario Benedetti                       
+          ni con las vueltas de la vida". <br>
+          - Mario Benedetti                    
           <br>
       </p>
     </div>
